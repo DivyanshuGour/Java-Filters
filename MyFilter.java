@@ -1,6 +1,4 @@
-package com.collegequera.filter;
-
-import com.collegequera.dto.User;
+package com.filterdemo.filter;
 import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -17,60 +15,26 @@ import javax.servlet.http.HttpServletResponse;
 public class MyFilter implements Filter {
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-
-    }
+    public void init(FilterConfig filterConfig) throws ServletException {}
 
     @Override
     public void doFilter(ServletRequest request,
             ServletResponse response,
             FilterChain chain) throws IOException, ServletException {
+       
         HttpServletRequest req = (HttpServletRequest) request;
-        HttpServletResponse res = (HttpServletResponse) response;
-        String url = req.getRequestURL().toString();
-        //System.out.println("\nURL >>>> " + url);
-
-        Object sessionObj = req.getSession().getAttribute("user");
-
-        if(url.contains("."))
-        {
-            chain.doFilter(request, response);
-        }else        
-        if (url.contains("/student/") || url.contains("/faculty/")) 
-        {
-            if (sessionObj == null) {
-                String u = req.getContextPath() + "/login.jsp";
-                res.sendRedirect(u);
-            } else 
-            {
-                User user = (User) sessionObj;
-                if(url.contains(user.getType()))
-                {
-                    chain.doFilter(request, response);
-                }else{
-                    if (user.getType().equals("faculty")) {
-                        res.sendRedirect(req.getContextPath() + "/faculty/home.jsp");
-                    } else {
-                        res.sendRedirect(req.getContextPath() + "/student/home.jsp");
-                    }
-                }
-            }
-        } else if (url.contains("/logout")) {
-            chain.doFilter(request, response);
-        } else if (sessionObj != null) {
-            User user = (User) sessionObj;
-            if (user.getType().equals("faculty")) {
-                res.sendRedirect(req.getContextPath() + "/faculty/home.jsp");
-            } else {
-                res.sendRedirect(req.getContextPath() + "/student/home.jsp");
-            }
-        } else {
-            chain.doFilter(request, response);
-        }
-    }
+        HttpServletResponse resp = (HttpServletResponse) response;
+       
+        PrintWriter out=resp.getWriter();  
+   
+        out.print("Write Conditions for applying filter on web app here.");  
+          
+        chain.doFilter(req, resp);//sends request to next resource  
+          
+        out.print("filter applied successfully.");  
+      
+    }  
 
     @Override
-    public void destroy() {
-
-    }
+    public void destroy() {}
 }
